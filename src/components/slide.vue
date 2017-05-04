@@ -70,14 +70,13 @@
            this.getdata();
            bus.$on('addrsslink',(data)=>{
                let feed = JSON.parse(data);
+               feed.unread=0;
                this.rssfeeds.push(feed);
             });
            bus.$on('newpost',(data)=>{
 
-                console.log(Object.keys(data));
+               console.log(Object.keys(data));
                for(let feed of this.rssfeeds){
-                   console.log(String(feed.pk));
-                   console.log(Object.keys(data).indexOf(String(feed.pk)));
 
                    if(Object.keys(data).indexOf(String(feed.pk))!==-1){
                         console.log(feed.pk);

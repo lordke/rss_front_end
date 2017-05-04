@@ -9,6 +9,7 @@ import VueAxios from 'vue-axios'
 import VueRouter from 'vue-router'
 import ElementUI from 'element-ui'
 import 'element-ui/lib/theme-default/index.css'
+import bus from  './components/bus.js'
 
 Vue.use(ElementUI)
 Vue.use(VueAxios,axios)
@@ -48,3 +49,14 @@ new Vue({
   template: '<App/>',
   components: { App }
 })
+
+var ws = new WebSocket("ws://localhost:8080/websocket");
+ws.onmessage = function(event){
+  let postdata = JSON.parse(event.data);
+  bus.$emit('newpost',postdata)
+  console.log(event.data);
+}
+
+ws.onopen=function(){
+  console.log('webscoket opened')
+}

@@ -1,7 +1,7 @@
 <template>
   <div class="entry">
     <Entry v-model="selectindex" >
-      <Entryitem v-for="item in items" :index="String(item.id)" >{{item.title}}</Entryitem>
+      <Entryitem v-for="item in items" :senti='item.sentiment' :index="String(item.id)" >{{item.title}}</Entryitem>
       <page :total="100" :page="current" :page-size="10"  :max-page="5" v-on:pagehandler="pageHandler"></page>
     </Entry>
 
