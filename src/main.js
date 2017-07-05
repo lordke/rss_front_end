@@ -50,7 +50,7 @@ new Vue({
   components: { App }
 })
 
-var ws = new WebSocket("ws://localhost:8080/websocket");
+var ws = new WebSocket("ws://localhost:8000/websocket");
 ws.onmessage = function(event){
   let postdata = JSON.parse(event.data);
   bus.$emit('newpost',postdata)
@@ -60,3 +60,5 @@ ws.onmessage = function(event){
 ws.onopen=function(){
   console.log('webscoket opened')
 }
+
+

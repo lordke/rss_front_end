@@ -37,6 +37,10 @@ module.exports = {
         target: 'http://localhost:8000',
         changeOrigin: true,
       },
+      '/unrssfeed':{
+        target: 'http://localhost:8000',
+        changeOrigin: true,
+      },
       '/rsspost':{
         target: 'http://localhost:8000',
         changeOrigin: true,
@@ -50,6 +54,14 @@ module.exports = {
         changeOrigin: true,
       },
       '/addrssfeed':{
+        target: 'http://localhost:8000',
+        changeOrigin: true,
+      },
+      '/addcollect':{
+        target: 'http://localhost:8000',
+        changeOrigin: true,
+      },
+      '/uncollect':{
         target: 'http://localhost:8000',
         changeOrigin: true,
       },

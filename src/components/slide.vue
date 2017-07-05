@@ -1,10 +1,13 @@
 <template>
-  <div class="content">
+  <div class="content" >
+    <div id="contextMenu" :style="rightstyle" @click="unrssfeed()">
+        删除该RSS频道
+    </div>
   <div class="slide">
     <el-menu mode="verticle" theme="dark"  router>
       <template v-for="rssfeed in rssfeeds">
-        <div class="liwrapper">
-          <el-menu-item class='feedls'  @click="rssfeed.unread=0" :key="String(rssfeed.pk)" :index="String(rssfeed.pk)" :route="getrouter(String(rssfeed.pk))">>{{rssfeed.fields.title}}</el-menu-item>
+        <div class="liwrapper" @mousedown.stop.prevent="right(rssfeed.pk,$event)">
+          <el-menu-item  class='feedls'   @click="rssfeed.unread=0 ;back(rssfeed.pk)" :key="String(rssfeed.pk)" :index="String(rssfeed.pk)" :route="getrouter(String(rssfeed.pk))">>{{rssfeed.fields.title}}</el-menu-item>
           <div class="notice" v-if="rssfeed.unread"><span >{{rssfeed.unread}}</span></div>>
         </div>
       </template>
@@ -56,17 +59,43 @@
     font-size:13px;
     font-weight: bold;
   }
+  #contextMenu{
+    width:130px;
+    height:30px;
+    text-align:center;
+    border-radius: 5px;
+    background: linear-gradient(top,#dbdbdb,#999);
+    color: #484848;
+    text-decoration: none;
+    text-shadow: 0 1px 0 #e0e0e0;
+    font-size: 14px;
+    padding: 5px 0px 1px;
+    cursor:pointer
+  }
+
+
 
 </style>
 <script>
+  document.body.oncontextmenu=function(){return false;};
+
   import bus from './bus.js'
   export default {
-      data:function(){
+      data(){
           return{
               rssfeeds: [],
+              rightstyle:{
+                display:"none"
+              },
+              current:1,
           }
       },
       created:function(){
+        document.body.onclick=()=>{
+            this.rightstyle={
+                 display:"none",
+            }
+          }
            this.getdata();
            bus.$on('addrsslink',(data)=>{
                let feed = JSON.parse(data);
@@ -74,8 +103,6 @@
                this.rssfeeds.push(feed);
             });
            bus.$on('newpost',(data)=>{
-
-               console.log(Object.keys(data));
                for(let feed of this.rssfeeds){
 
                    if(Object.keys(data).indexOf(String(feed.pk))!==-1){
@@ -88,12 +115,21 @@
       },
       methods:{
           getdata:function(){
-              let data
-              this.axios.get('/rssfeed/',{
-                  params:{
-                      userid:this.$cookie.get('userid')
+              if(this.$route.params.feedid==0){
+                this.rssfeeds=[{
+                  pk:0,
+                  fields:{
+                      title:"我的收藏文章"
                   }
-              }).then((response)=>{
+                }, {
+                  pk:"1",
+                  fields:{
+                    title:"返回频道列表"
+                  }
+                }];
+                return ;
+              };
+              this.axios.get('/rssfeed/').then((response)=>{
                   let res = JSON.parse(response.data);
                   for(let feed of res){
                       feed.unread=0
@@ -111,8 +147,47 @@
               return{
                 path: '/'+index
               }
+        },
+        back(back){
+            if(back=="back"){
+                this.getdata()
+            }
+        },
+        right(feedid,event){
+          if(event.button == 2){
+            let rightmenu = document.getElementById("contextMenu")
+            this.current=feedid
+            this.rightstyle={
+              position:"absolute",
+              display:"block",
+              top:event.pageY+'px',
+              left:event.pageX+'px',
+              "background-color":"white",
+              "z-index":"1000"
+            }
+
+          }
+        },
+        unrssfeed(){
+          this.axios.get('/unrssfeed/',{
+            params:{
+              feedid:this.current
+            }
+          }).then((response)=>{
+            this.getdata();
+          })
         }
-      }
+      },
+      watch: {
+        '$route' (to, from) {
+          if(to.params.feedid==0){
+            this.getdata();
+          }
+          else if(to.params.feedid == "1"){
+            this.getdata();
+          }
+        }
+      },
 
   }
 </script>

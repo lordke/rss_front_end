@@ -6,7 +6,9 @@
     <nav>
       <el-button class="login" v-if="!login" type="primary" @click="$router.push('/login')">登录</el-button>
       <el-button v-if="login"type="danger" @click="logout()">登出</el-button>
-      <el-button v-if="login"type="primary" icon="update" @click="open3()">添加RSS订阅源</el-button>
+      <el-button v-if="login" type="primary" icon="update" @click="open3()">添加RSS订阅源</el-button>
+      <el-button v-if="login" type="primary" @click="$router.push('/0')">我的收藏</el-button>
+
 
     </nav>
   </div>
